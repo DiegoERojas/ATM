@@ -21,9 +21,8 @@ def Date_Input():
         try:
             userDate = int(input("Please enter the date in the format, MDD or MMDD: "))
         except ValueError:
-            print("Invalid date, please try again")
+            print("Please enter a numerical value for the date.")
             continue
-
         if len(str(userDate).strip()) == 3:
             month = str(userDate)[:1]
             day = str(userDate)[1:]
@@ -57,7 +56,7 @@ def Date_Input():
 def Valid_Date(month, day):
     # List of the days of the year for each month starting at index 1
     daysOfTheYear = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    return day >= 1 and day <= daysOfTheYear[month]
+    return 1 <= day <= daysOfTheYear[month]
 
 
 def DatesInList(ListOfDates):
@@ -71,9 +70,6 @@ def deposit():
     DatesInList(ListOfDates)
     global currentBalance
     global currentDateIndex
-    dollars = 0
-    cents = 0
-    amount = ""
 
     print("Please enter the amount you would like to deposit in dollars then cents: \n")
     while True:
@@ -85,14 +81,15 @@ def deposit():
                 break
             except ValueError:
                 print("Please enter a numerical value.")
-        userResponce = input(f"You have entered, ${dollars}.{cents}, is this correct?\nPress (Y) for yes, or (N) for no: \n").upper()
-        if (userResponce == "Y"):
+        userResponse = input(
+            f"You have entered, ${dollars}.{cents}, is this correct?\nPress (Y) for yes, or (N) for no: \n").upper()
+        if userResponse == "Y":
             currentBalance = currentBalance + float(amount)
             balanceHistory.insert(currentDateIndex, currentBalance)
             transactionTypeHistory.insert(currentDateIndex, "Deposit")
             currentDateIndex = currentDateIndex + 1
             break
-        elif userResponce == "N":
+        elif userResponse == "N":
             continue
         else:
             print("Invalid option, please try again")
@@ -108,9 +105,9 @@ def withdrawal():
         dollars = int(input("dollars: "))
         cents = int(input("cents: "))
         amount = str(dollars) + "." + str(cents)
-        userResponce = input(
+        userResponse = input(
             f"You have entered, ${dollars}.{cents}, is this correct?\nPress (Y) for yes, or (N) for no: \n").upper()
-        if userResponce == "Y":
+        if userResponse == "Y":
             if float(amount) < currentBalance:
                 currentBalance = currentBalance - float(amount)
                 balanceHistory.insert(currentDateIndex, currentBalance)
@@ -118,7 +115,7 @@ def withdrawal():
                 currentDateIndex = currentDateIndex + 1
                 break
             print("Cannot withdrawal more than your current balance.")
-        elif userResponce == "N":
+        elif userResponse == "N":
             continue
         else:
             print("Invalid option, please try again.")
@@ -140,6 +137,7 @@ def Largest_Chance():
 def Display_all_transactions():
     loopingIndex = 0
     global currentDateIndex
+
     DatesInList(ListOfDates)
     balanceHistory.insert(currentDateIndex, "-----")
     transactionTypeHistory.insert(currentDateIndex, "All transactions")
@@ -156,30 +154,78 @@ def Display_all_transactions():
             localMonth = dateString[:2]
             localDay = dateString[2:]
 
-        #formatting the displayed transactions according to the transaction type
+        # formatting the displayed transactions according to the transaction type
         if transactionTypeHistory[loopingIndex] == "Deposit":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t\t\t{balanceHistory[loopingIndex]}")
+            print(
+                f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t\t\t{balanceHistory[loopingIndex]}")
         elif transactionTypeHistory[loopingIndex] == "Withdrawal":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t\t{balanceHistory[loopingIndex]}")
+            print(
+                f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t\t{balanceHistory[loopingIndex]}")
         elif transactionTypeHistory[loopingIndex] == "Balance inquiry":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t{balanceHistory[loopingIndex]}")
+            print(
+                f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t{balanceHistory[loopingIndex]}")
         elif transactionTypeHistory[loopingIndex] == "Largest Change":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
+            print(
+                f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
         elif transactionTypeHistory[loopingIndex] == "All transactions":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
+            print(
+                f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
         elif transactionTypeHistory[loopingIndex] == "Day\'s transactions":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
+            print(
+                f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
         loopingIndex = loopingIndex + 1
 
 
-
 def Display_day_transactions():
-    # TODO: WORK ON THIS METHOD
-    # Loop through ListOfDates and grab the index for every occurrence of a certain date
-    # Store all indexes of the date into a set, then loop through the set. Loop through
-    # the set and navigate through transactionTypeHistory and balanceHistory using the
-    # index values within the set created
-    pass
+    global currentDateIndex, userDate
+    DatesInList(ListOfDates)
+    balanceHistory.insert(currentDateIndex, "-----")
+    transactionTypeHistory.insert(currentDateIndex, "Day's transactions")
+    currentDateIndex = currentDateIndex + 1
+    while True:
+        try:
+            userDate = input("Please enter the date to see all transactions that occurred on that day: ")
+        except ValueError:
+            print("Please enter a numerical value for the date.")
+
+        if len(userDate) == 3:
+            userMonth = userDate[:1]
+            userDay = userDate[1:]
+
+            userMonth = int(userMonth)
+            userDay = int(userDay)
+
+            if Valid_Date(userMonth, userDay):
+                break
+            print("That date does not exist, please try again.")
+        elif len(userDate) == 4:
+            userMonth = userDate[:2]
+            userDay = userDate[2:]
+            userMonth = int(userMonth)
+            userDay = int(userDay)
+
+            if Valid_Date(userMonth, userDay):
+                break
+            print("That date does not exist, please try again.")
+        else:
+            print("Please enter a valid date")
+
+    dateIndexes = [i for i, date in enumerate(ListOfDates) if date == userDate]
+
+    print("Date\t\tTransaction\t\t\tAmount\n========== 	=============	    ========")
+    for dateIndex in dateIndexes:
+        if transactionTypeHistory[dateIndex] == "Deposit":
+            print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t\t\t\t{balanceHistory[dateIndex]}")
+        elif transactionTypeHistory[dateIndex] == "Withdrawal":
+            print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t\t\t{balanceHistory[dateIndex]}")
+        elif transactionTypeHistory[dateIndex] == "Balance inquiry":
+            print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t\t{balanceHistory[dateIndex]}")
+        elif transactionTypeHistory[dateIndex] == "Largest Change":
+            print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t{balanceHistory[dateIndex]}")
+        elif transactionTypeHistory[dateIndex] == "All transactions":
+            print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t{balanceHistory[dateIndex]}")
+        elif transactionTypeHistory[dateIndex] == "Day\'s transactions":
+            print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t{balanceHistory[dateIndex]}")
 
 
 while loop:
@@ -193,7 +239,7 @@ while loop:
         6: Display_day_transactions
     }
     print("\nWelcome to the ATM. Please select which option you would like to perform:\n1. Deposit"
-          "\n2. Withdrawal\n3. Balance Inquiry\n4. Display when the largest change in balance occured"
+          "\n2. Withdrawal\n3. Balance Inquiry\n4. Display when the largest change in balance occurred"
           "\n5. Display all transactions\n6. Display all transactions that took place on a certain day"
           "\n7. Exit\n")
 
@@ -203,21 +249,16 @@ while loop:
     """
     while True:
         userOptions = int(input())
-        if (userOptions >= 1 and userOptions <= 7):
+        if 1 <= userOptions <= 7:
             if userOptions == 7:
                 loop = not loop
                 break
             userChoice[userOptions]()
             '''
-            print(f"Dates when transactions occured: {ListOfDates}")
+            print(f"Dates when transactions occurred: {ListOfDates}")
             print(f"Balance History: {balanceHistory}")
             print(f"Transaction type history: {transactionTypeHistory}")
             '''
             break
         else:
             print("Selection outside of range, please try again.")
-
-# comment
-
-
-
