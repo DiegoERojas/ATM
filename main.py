@@ -131,11 +131,11 @@ def Balance_Inquiry():
 
 
 def Largest_Chance():
-    # Loop through balanceHistory and determine the largest difference in amounts
-    # When the largest change has been found, grab the both of the indexes before
-    # and after the occurrence of the largest change. Using both indexes, print
-    # their respective location in ListOfDates and transactionTypeHistory similar
-    # to that of the Display_day_transactions method.
+    global currentDateIndex
+    DatesInList(ListOfDates)
+    balanceHistory.insert(currentDateIndex, currentBalance)
+    transactionTypeHistory.insert(currentDateIndex, "Largest change")
+    currentDateIndex = currentDateIndex + 1
     largestChange = 0
     largestChangeIndex = []
     pointingIndex = 1
@@ -145,12 +145,36 @@ def Largest_Chance():
         if isinstance(balanceHistory[balanceUpdate], int) and isinstance(balanceHistory[pointingIndex], int):
             # If the difference between both indexes are larger than largestChance, update largestChange and store both indexes
             if abs(balanceHistory[pointingIndex] - balanceHistory[balanceUpdate]) > largestChange:
+                largestChange = abs(balanceHistory[pointingIndex] - balanceHistory[balanceUpdate])
                 largestChangeIndex[0] = balanceHistory.index(balanceUpdate)
                 largestChangeIndex[1] = balanceHistory.index(pointingIndex)
+                pointingIndex = pointingIndex + 1
         else:
             pointingIndex = pointingIndex + 1
+    print(f"largestChangeIndex: {largestChangeIndex}")
+    localMonth, localDay = "", ""
 
-    # TODO: print the format for the transactions where the largest change occurred
+    print("Date\t\tTransaction\t\t\tAmount\n========== 	=============	    ========")
+    for index in largestChangeIndex:
+        if len(ListOfDates[index]) == 3:
+            localMonth = ListOfDates[index][:1]
+            localDay = ListOfDates[index][1:]
+        elif len(ListOfDates[index] == 4):
+            localMonth = ListOfDates[index][:2]
+            localDay = ListOfDates[index][2:]
+
+        if transactionTypeHistory[largestChangeIndex[index]] == "Deposit":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t\t\t{balanceHistory[index]}")
+        elif transactionTypeHistory[largestChangeIndex[index]] == "Withdrawal":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t\t{balanceHistory[index]}")
+        elif transactionTypeHistory[largestChangeIndex[0]] == "Balance inquiry":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t{balanceHistory[index]}")
+        elif transactionTypeHistory[largestChangeIndex[0]] == "Largest change":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t{balanceHistory[index]}")
+        elif transactionTypeHistory[largestChangeIndex[0]] == "All transactions":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t{balanceHistory[index]}")
+        elif transactionTypeHistory[largestChangeIndex[0]] == "Day\'s transactions":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t{balanceHistory[index]}")
 
 
 def Display_all_transactions():
@@ -183,7 +207,7 @@ def Display_all_transactions():
         elif transactionTypeHistory[loopingIndex] == "Balance inquiry":
             print(
                 f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t\t{balanceHistory[loopingIndex]}")
-        elif transactionTypeHistory[loopingIndex] == "Largest Change":
+        elif transactionTypeHistory[loopingIndex] == "Largest change":
             print(
                 f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[loopingIndex]}\t{balanceHistory[loopingIndex]}")
         elif transactionTypeHistory[loopingIndex] == "All transactions":
@@ -239,7 +263,7 @@ def Display_day_transactions():
             print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t\t\t{balanceHistory[dateIndex]}")
         elif transactionTypeHistory[dateIndex] == "Balance inquiry":
             print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t\t{balanceHistory[dateIndex]}")
-        elif transactionTypeHistory[dateIndex] == "Largest Change":
+        elif transactionTypeHistory[dateIndex] == "Largest change":
             print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t{balanceHistory[dateIndex]}")
         elif transactionTypeHistory[dateIndex] == "All transactions":
             print(f"{userMonth}/{userDay}/2022\t{transactionTypeHistory[dateIndex]}\t{balanceHistory[dateIndex]}")
@@ -262,10 +286,8 @@ while loop:
           "\n5. Display all transactions\n6. Display all transactions that took place on a certain day"
           "\n7. Exit\n")
 
-    """
-    Checking to see if the user's selection is valid (both an integer
-    and is an option)
-    """
+    # Checking to see if the user's selection is valid (both an integer
+    # and is an option)
     while True:
         userOptions = int(input())
         if 1 <= userOptions <= 7:
@@ -273,11 +295,6 @@ while loop:
                 loop = not loop
                 break
             userChoice[userOptions]()
-            '''
-            print(f"Dates when transactions occurred: {ListOfDates}")
-            print(f"Balance History: {balanceHistory}")
-            print(f"Transaction type history: {transactionTypeHistory}")
-            '''
             break
         else:
             print("Selection outside of range, please try again.")
