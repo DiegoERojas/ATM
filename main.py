@@ -131,7 +131,26 @@ def Balance_Inquiry():
 
 
 def Largest_Chance():
-    pass
+    # Loop through balanceHistory and determine the largest difference in amounts
+    # When the largest change has been found, grab the both of the indexes before
+    # and after the occurrence of the largest change. Using both indexes, print
+    # their respective location in ListOfDates and transactionTypeHistory similar
+    # to that of the Display_day_transactions method.
+    largestChange = 0
+    largestChangeIndex = []
+    pointingIndex = 1
+
+    for balanceUpdate in range(len(balanceHistory)):
+        # Following statement checks the value at index balanceUpdate is an int, and if the value at the next index is also an int
+        if isinstance(balanceHistory[balanceUpdate], int) and isinstance(balanceHistory[pointingIndex], int):
+            # If the difference between both indexes are larger than largestChance, update largestChange and store both indexes
+            if abs(balanceHistory[pointingIndex] - balanceHistory[balanceUpdate]) > largestChange:
+                largestChangeIndex[0] = balanceHistory.index(balanceUpdate)
+                largestChangeIndex[1] = balanceHistory.index(pointingIndex)
+        else:
+            pointingIndex = pointingIndex + 1
+
+    # TODO: print the format for the transactions where the largest change occurred
 
 
 def Display_all_transactions():
