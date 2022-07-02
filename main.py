@@ -139,6 +139,7 @@ def Largest_Chance():
     largestChange = 0
     largestChangeIndex = [0, 0]
     pointingIndex = 1
+    listOfDatesCopy = ListOfDates.copy()
 
     for balanceUpdate in range(len(balanceHistory)):
         # Following statement checks the value at index balanceUpdate is a float, and if the value at the next index is also a float
@@ -146,24 +147,24 @@ def Largest_Chance():
         print(f"Type for balanceHistory at index balanceUpdate: {type(balanceHistory[balanceUpdate])}")
         print(f"Type for balanceHistory at index pointingIndex: {type(balanceHistory[pointingIndex])}")
         '''
-        if balanceUpdate == len(balanceHistory) - 1 or pointingIndex == len(balanceHistory) - 1:
+        if balanceUpdate == len(balanceHistory) or pointingIndex == len(balanceHistory):
             break
         while not isinstance(balanceHistory[balanceUpdate], float):
-            balanceUpdate = balanceUpdate + 1
             if balanceUpdate == len(balanceHistory) - 1:
                 break
+            balanceUpdate = balanceUpdate + 1
         while not isinstance(balanceHistory[pointingIndex], float):
-            pointingIndex = pointingIndex + 1
             if pointingIndex == len(balanceHistory) - 1:
                 break
+            pointingIndex = pointingIndex + 1
         if isinstance(balanceHistory[balanceUpdate], float) and isinstance(balanceHistory[pointingIndex], float):
             # If the difference between both indexes are larger than largestChance, update largestChange and store both indexes
             if abs(balanceHistory[pointingIndex] - balanceHistory[balanceUpdate]) > largestChange:
                 largestChange = abs(balanceHistory[pointingIndex] - balanceHistory[balanceUpdate])
                 largestChangeIndex.pop()
                 largestChangeIndex.pop()
-                largestChangeIndex.append(ListOfDates[balanceUpdate])
-                largestChangeIndex.append(ListOfDates[pointingIndex])
+                largestChangeIndex.append(balanceHistory.index(balanceHistory[balanceUpdate]))
+                largestChangeIndex.append(balanceHistory.index(balanceHistory[pointingIndex]))
                 pointingIndex = pointingIndex + 1
         else:
             pointingIndex = pointingIndex + 1
@@ -180,12 +181,17 @@ def Largest_Chance():
             localMonth = strIndex[:2]
             localDay = strIndex[2:]
 
-        balanceIndex = ListOfDates.index(largestChangeIndex[index])
+        balanceIndex = listOfDatesCopy.index(largestChangeIndex[index])
 
         if transactionTypeHistory[largestChangeIndex.index(strIndex)] == "Deposit":
             print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t\t\t{balanceHistory[balanceIndex]}")
         elif transactionTypeHistory[largestChangeIndex.index(strIndex)] == "Withdrawal":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t\t{balanceHistory[balanceIndex]}")
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t{balanceHistory[balanceIndex]}")
+
+        largestChangeIndex.insert(index, "---")
+        largestChangeIndex.pop(index)
+        listOfDatesCopy.insert(index, "---")
+        listOfDatesCopy.pop(index+1)
 
 
 def Display_all_transactions():
