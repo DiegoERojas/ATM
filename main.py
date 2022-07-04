@@ -130,33 +130,33 @@ def Balance_Inquiry():
     print(f"Current balance: ${currentBalance}")
 
 
-def Largest_Chance():
+def Largest_Change():
     global currentDateIndex
     DatesInList(ListOfDates)
     balanceHistory.insert(currentDateIndex, "-----")
     transactionTypeHistory.insert(currentDateIndex, "Largest change")
     currentDateIndex = currentDateIndex + 1
+
     largestChange = 0
     largestChangeIndex = [0, 0]
     pointingIndex = 1
     listOfDatesCopy = ListOfDates.copy()
 
     for balanceUpdate in range(len(balanceHistory)):
-        # Following statement checks the value at index balanceUpdate is a float, and if the value at the next index is also a float
-        '''
-        print(f"Type for balanceHistory at index balanceUpdate: {type(balanceHistory[balanceUpdate])}")
-        print(f"Type for balanceHistory at index pointingIndex: {type(balanceHistory[pointingIndex])}")
-        '''
+        # The following if and double while statements are here in case a transaction is not a deposit or withdrawal
         if balanceUpdate == len(balanceHistory) or pointingIndex == len(balanceHistory):
             break
+
         while not isinstance(balanceHistory[balanceUpdate], float):
             if balanceUpdate == len(balanceHistory) - 1:
                 break
             balanceUpdate = balanceUpdate + 1
+
         while not isinstance(balanceHistory[pointingIndex], float):
             if pointingIndex == len(balanceHistory) - 1:
                 break
             pointingIndex = pointingIndex + 1
+
         if isinstance(balanceHistory[balanceUpdate], float) and isinstance(balanceHistory[pointingIndex], float):
             # If the difference between both indexes are larger than largestChance, update largestChange and store both indexes
             if abs(balanceHistory[pointingIndex] - balanceHistory[balanceUpdate]) > largestChange:
@@ -173,20 +173,19 @@ def Largest_Chance():
 
     print("Date\t\tTransaction\t\t\tAmount\n========== 	=============	    ========")
     for index in range(len(largestChangeIndex)):
-        strIndex = str(largestChangeIndex[index])
-        if len(strIndex) == 3:
-            localMonth = strIndex[:1]
-            localDay = strIndex[1:]
-        elif len(strIndex) == 4:
-            localMonth = strIndex[:2]
-            localDay = strIndex[2:]
+        strIndex = largestChangeIndex[index]
+        dateAtIndex = str(listOfDatesCopy[strIndex])
+        if len(dateAtIndex) == 3:
+            localMonth = dateAtIndex[:1]
+            localDay = dateAtIndex[1:]
+        elif len(str(listOfDatesCopy[strIndex])) == 4:
+            localMonth = dateAtIndex[:2]
+            localDay = dateAtIndex[2:]
 
-        balanceIndex = listOfDatesCopy.index(largestChangeIndex[index])
-
-        if transactionTypeHistory[largestChangeIndex.index(strIndex)] == "Deposit":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t\t\t{balanceHistory[balanceIndex]}")
-        elif transactionTypeHistory[largestChangeIndex.index(strIndex)] == "Withdrawal":
-            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[index]}\t\t{balanceHistory[balanceIndex]}")
+        if transactionTypeHistory[largestChangeIndex[index]] == "Deposit":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[largestChangeIndex[index]]}\t\t\t\t{balanceHistory[int(strIndex)]}")
+        elif transactionTypeHistory[largestChangeIndex[index]] == "Withdrawal":
+            print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[largestChangeIndex[index]]}\t\t\t{balanceHistory[int(strIndex)]}")
 
         largestChangeIndex.insert(index, "---")
         largestChangeIndex.pop(index)
@@ -294,7 +293,7 @@ while loop:
         1: deposit,
         2: withdrawal,
         3: Balance_Inquiry,
-        4: Largest_Chance,
+        4: Largest_Change,
         5: Display_all_transactions,
         6: Display_day_transactions
     }
@@ -306,7 +305,11 @@ while loop:
     # Checking to see if the user's selection is valid (both an integer
     # and is an option)
     while True:
-        userOptions = int(input())
+        try:
+            userOptions = int(input())
+        except ValueError:
+            print("Please enter a valid integer.")
+            continue
         if 1 <= userOptions <= 7:
             if userOptions == 7:
                 loop = not loop
