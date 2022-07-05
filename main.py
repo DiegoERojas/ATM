@@ -85,6 +85,7 @@ def deposit():
             f"You have entered, ${dollars}.{cents}, is this correct?\nPress (Y) for yes, or (N) for no: \n").upper()
         if userResponse == "Y":
             currentBalance = currentBalance + float(amount)
+            currentBalance = round(currentBalance, 2)
             balanceHistory.insert(currentDateIndex, currentBalance)
             transactionTypeHistory.insert(currentDateIndex, "Deposit")
             currentDateIndex = currentDateIndex + 1
@@ -110,6 +111,7 @@ def withdrawal():
         if userResponse == "Y":
             if float(amount) < currentBalance:
                 currentBalance = currentBalance - float(amount)
+                currentBalance = round(currentBalance, 2)
                 balanceHistory.insert(currentDateIndex, currentBalance)
                 transactionTypeHistory.insert(currentDateIndex, "Withdrawal")
                 currentDateIndex = currentDateIndex + 1
@@ -127,7 +129,7 @@ def Balance_Inquiry():
     balanceHistory.insert(currentDateIndex, "-----")
     transactionTypeHistory.insert(currentDateIndex, "Balance inquiry")
     currentDateIndex = currentDateIndex + 1
-    print(f"Current balance: ${currentBalance}")
+    print(f"Current balance: ${round(currentBalance, 2)}")
 
 
 def Largest_Change():
@@ -186,11 +188,6 @@ def Largest_Change():
             print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[largestChangeIndex[index]]}\t\t\t\t{balanceHistory[int(strIndex)]}")
         elif transactionTypeHistory[largestChangeIndex[index]] == "Withdrawal":
             print(f"{localMonth}/{localDay}/2022\t{transactionTypeHistory[largestChangeIndex[index]]}\t\t\t{balanceHistory[int(strIndex)]}")
-
-        largestChangeIndex.insert(index, "---")
-        largestChangeIndex.pop(index)
-        listOfDatesCopy.insert(index, "---")
-        listOfDatesCopy.pop(index+1)
 
 
 def Display_all_transactions():
@@ -302,8 +299,7 @@ while loop:
           "\n5. Display all transactions\n6. Display all transactions that took place on a certain day"
           "\n7. Exit\n")
 
-    # Checking to see if the user's selection is valid (both an integer
-    # and is an option)
+    # Checking to see if the user's selection is valid (both an integer and is an option)
     while True:
         try:
             userOptions = int(input())
